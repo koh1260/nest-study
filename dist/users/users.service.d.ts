@@ -1,9 +1,13 @@
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UserInfo } from './UserInfo';
+import { EmailService } from 'src/email/email.service';
 export declare class UsersService {
-    create(createUserDto: CreateUserDto): string;
-    findAll(): string;
-    findOne(id: number): string;
-    update(id: number, updateUserDto: UpdateUserDto): string;
-    remove(id: number): string;
+    private emailService;
+    constructor(emailService: EmailService);
+    createUser(name: string, email: string, password: string): Promise<void>;
+    private checkUserExist;
+    private saveUser;
+    private sendMemberJoinEmail;
+    verifyEmail(signupVerifyToken: string): Promise<string>;
+    login(email: string, password: string): Promise<void>;
+    getUserInfo(userId: string): Promise<UserInfo>;
 }

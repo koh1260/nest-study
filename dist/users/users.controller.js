@@ -14,33 +14,29 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersController = void 0;
 const common_1 = require("@nestjs/common");
-const users_service_1 = require("./users.service");
 const create_user_dto_1 = require("./dto/create-user.dto");
-const update_user_dto_1 = require("./dto/update-user.dto");
-const get_user_dto_1 = require("./dto/get-user.dto");
+const verify_email_dto_1 = require("./dto/verify-email.dto");
+const user_login_dto_1 = require("./dto/user-login.dto");
+const users_service_1 = require("./users.service");
 let UsersController = class UsersController {
     constructor(usersService) {
         this.usersService = usersService;
     }
-    create(createUserDto) {
-        const { name, email } = createUserDto;
-        return `유저를 생성하였습니다. 이름: ${name}, 이메일: ${email}`;
+    async createUser(dto) {
+        const { name, email, password } = dto;
+        console.log(dto);
+        await this.usersService.createUser(name, email, password);
     }
-    findAll(res, getUserDto) {
-        const { offset, limit } = getUserDto;
-        return `offset: ${offset}, limit: ${limit}`;
+    async verifyEmail(dto) {
+        const { signupVerifyToken } = dto;
+        return this.usersService.verifyEmail(signupVerifyToken);
     }
-    findOne(id) {
-        if (+id < 1) {
-            throw new common_1.BadRequestException('id는 0보다 큰 값이어야 합니다.');
-        }
-        return this.usersService.findOne(+id);
+    async login(dto) {
+        const { email, password } = dto;
+        return this.usersService.login(email, password);
     }
-    update(id, updateUserDto) {
-        return this.usersService.update(+id, updateUserDto);
-    }
-    remove(id) {
-        return this.usersService.remove(+id);
+    async getUserInfo(userId) {
+        return await this.usersService.getUserInfo(userId);
     }
 };
 __decorate([
@@ -48,40 +44,29 @@ __decorate([
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_user_dto_1.CreateUserDto]),
-    __metadata("design:returntype", void 0)
-], UsersController.prototype, "create", null);
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "createUser", null);
 __decorate([
-    (0, common_1.Get)(),
-    __param(0, (0, common_1.Res)()),
-    __param(1, (0, common_1.Query)()),
+    (0, common_1.Post)('/email-verify'),
+    __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, get_user_dto_1.GetUserDto]),
-    __metadata("design:returntype", void 0)
-], UsersController.prototype, "findAll", null);
+    __metadata("design:paramtypes", [verify_email_dto_1.VerifyEmailDto]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "verifyEmail", null);
 __decorate([
-    (0, common_1.Redirect)('http://nestjs.com', 301),
-    (0, common_1.Get)(':id'),
+    (0, common_1.Post)('/login'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [user_login_dto_1.UserLogininDto]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "login", null);
+__decorate([
+    (0, common_1.Get)('/:id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
-], UsersController.prototype, "findOne", null);
-__decorate([
-    (0, common_1.HttpCode)(202),
-    (0, common_1.Patch)(':id'),
-    __param(0, (0, common_1.Param)('id')),
-    __param(1, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_user_dto_1.UpdateUserDto]),
-    __metadata("design:returntype", void 0)
-], UsersController.prototype, "update", null);
-__decorate([
-    (0, common_1.Delete)(':id'),
-    __param(0, (0, common_1.Param)('id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
-], UsersController.prototype, "remove", null);
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "getUserInfo", null);
 UsersController = __decorate([
     (0, common_1.Controller)('users'),
     __metadata("design:paramtypes", [users_service_1.UsersService])

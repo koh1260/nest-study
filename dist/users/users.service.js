@@ -5,28 +5,46 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersService = void 0;
 const common_1 = require("@nestjs/common");
+const email_service_1 = require("../email/email.service");
+const uuid = require("uuid");
 let UsersService = class UsersService {
-    create(createUserDto) {
-        return 'This action adds a new user';
+    constructor(emailService) {
+        this.emailService = emailService;
     }
-    findAll() {
-        return `This action returns all users`;
+    async createUser(name, email, password) {
+        await this.checkUserExist(email);
+        const signupVerifyToken = uuid.v1();
+        await this.saveUser(name, email, password, signupVerifyToken);
+        await this.sendMemberJoinEmail(email, signupVerifyToken);
     }
-    findOne(id) {
-        return `This action returns a #${id} user`;
+    checkUserExist(email) {
+        return false;
     }
-    update(id, updateUserDto) {
-        return `This action updates a #${id} user`;
+    saveUser(name, email, password, signupVerifyToken) {
+        return;
     }
-    remove(id) {
-        return `This action removes a #${id} user`;
+    async sendMemberJoinEmail(email, signupVerifyToken) {
+        await this.emailService.sendMemberJoinVerification(email, signupVerifyToken);
+    }
+    async verifyEmail(signupVerifyToken) {
+        throw new Error('Method not implemented');
+    }
+    async login(email, password) {
+        throw new Error('Method not implemented');
+    }
+    async getUserInfo(userId) {
+        throw new Error('Method not implemented');
     }
 };
 UsersService = __decorate([
-    (0, common_1.Injectable)()
+    (0, common_1.Injectable)(),
+    __metadata("design:paramtypes", [email_service_1.EmailService])
 ], UsersService);
 exports.UsersService = UsersService;
 //# sourceMappingURL=users.service.js.map

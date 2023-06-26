@@ -1,13 +1,13 @@
-import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { GetUserDto } from './dto/get-user.dto';
+import { VerifyEmailDto } from './dto/verify-email.dto';
+import { UserLogininDto } from './dto/user-login.dto';
+import { UserInfo } from './UserInfo';
+import { UsersService } from './users.service';
 export declare class UsersController {
-    private readonly usersService;
+    private usersService;
     constructor(usersService: UsersService);
-    create(createUserDto: CreateUserDto): string;
-    findAll(res: any, getUserDto: GetUserDto): string;
-    findOne(id: string): string;
-    update(id: string, updateUserDto: UpdateUserDto): string;
-    remove(id: string): string;
+    createUser(dto: CreateUserDto): Promise<void>;
+    verifyEmail(dto: VerifyEmailDto): Promise<string>;
+    login(dto: UserLogininDto): Promise<void>;
+    getUserInfo(userId: string): Promise<UserInfo>;
 }
