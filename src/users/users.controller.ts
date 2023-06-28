@@ -16,11 +16,12 @@ export class UsersController {
         await this.usersService.createUser(name, email, password);
     }
 
-    @Post('/email-verify')
+    @Get('/email-verify')
     async verifyEmail(@Query() dto: VerifyEmailDto): Promise<string>{
         const {signupVerifyToken} = dto;
+        console.log(dto);
 
-        return this.usersService.verifyEmail(signupVerifyToken);
+        return;
     }
 
     @Post('/login')

@@ -49,6 +49,6 @@ export class UsersService {
         // 1. userID를 가진 유저가 존재하는지 DB에서 확인 없다면 에러
         // 2. 조회된 데이터를 UserInfo 타입으로 응답
 
-        throw new Error('Method not implemented');
+        throw new Error('Method not implemented GET USER');
     }
 }
