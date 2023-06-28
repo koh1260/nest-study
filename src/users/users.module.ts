@@ -2,9 +2,15 @@ import { Module } from '@nestjs/common';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { EmailModule } from 'src/email/email.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UserEntity } from 'src/entities/user.entity';
 
 @Module({
-    imports: [EmailModule],
+    imports: [
+        EmailModule,
+        // entity 등록, repository pattern 지원, injectRepository로 주입
+        TypeOrmModule.forFeature([UserEntity])
+    ],
     controllers: [UsersController],
     providers: [UsersService],
 })

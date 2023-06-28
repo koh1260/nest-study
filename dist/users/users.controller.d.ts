@@ -7,6 +7,7 @@ export declare class UsersController {
     private usersService;
     constructor(usersService: UsersService);
     createUser(dto: CreateUserDto): Promise<void>;
+    findAll(): Promise<() => Promise<UserInfo[]>>;
     verifyEmail(dto: VerifyEmailDto): Promise<string>;
     login(dto: UserLogininDto): Promise<void>;
     getUserInfo(userId: string): Promise<UserInfo>;
