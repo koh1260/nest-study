@@ -9,6 +9,6 @@ export declare class UsersController {
     createUser(dto: CreateUserDto): Promise<void>;
     findAll(): Promise<() => Promise<UserInfo[]>>;
     verifyEmail(dto: VerifyEmailDto): Promise<string>;
-    login(dto: UserLogininDto): Promise<void>;
+    login(dto: UserLogininDto): Promise<string>;
     getUserInfo(userId: string): Promise<UserInfo>;
 }

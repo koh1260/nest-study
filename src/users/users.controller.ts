@@ -22,12 +22,12 @@ export class UsersController {
         return this.usersService.findAll;
     }
 
-    @Get('/email-verify')
+    @Post('/email-verify')
     async verifyEmail(@Query() dto: VerifyEmailDto): Promise<string>{
         const {signupVerifyToken} = dto;
-        console.log(dto);
+        // console.log(dto);
 
-        return;
+        return this.usersService.verifyEmail(signupVerifyToken);
     }
 
     @Post('/login')

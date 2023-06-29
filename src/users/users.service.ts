@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, UnprocessableEntityException } from '@nestjs/common';
+import { Head, Header, Headers, Injectable, InternalServerErrorException, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import { UserInfo } from './UserInfo';
 import { EmailService } from 'src/email/email.service';
 import * as uuid from 'uuid';
@@ -6,10 +6,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from 'src/entities/user.entity';
 import { DataSource, Repository } from 'typeorm';
 import { ulid } from 'ulid';
+import { NotFoundError } from 'rxjs';
+import { AuthService } from 'src/auth/auth.service';
 
 @Injectable()
 export class UsersService {
     constructor(
+        private authService: AuthService,
         private emailService: EmailService,
         @InjectRepository(UserEntity) private userRepository: Repository<UserEntity>,
         private dataSource: DataSource,
@@ -62,6 +65,22 @@ export class UsersService {
         throw new Error('Method not implemented');
     }
 
+    async login(email: string, password: string): Promise<string>{
+        const user = await this.userRepository.findOneBy({
+            email: email
+        });
+
+        if(!user){
+            throw new NotFoundException('유저가 존재하지 않습니다.');
+        }
+
+        return this.authService.login({
+            id: user.id,
+            name: user.name,
+            email: user.email
+        });
+    }
+
     async createUser(name: string, email: string, password: string){
         const userExist = await this.checkUserExist(email);
         if(userExist){
@@ -71,8 +90,9 @@ export class UsersService {
         const signupVerifyToken = uuid.v1();
 
         await this.saveUserUsingTransaction(name, email, password, signupVerifyToken);
-        // await this.sendMemberJoinEmail(email, signupVerifyToken);
+        await this.sendMemberJoinEmail(email, signupVerifyToken);
     }
+
 
     private async checkUserExist(email: string){
         const user = await this.userRepository.findOne({
@@ -103,23 +123,37 @@ export class UsersService {
         // TODO
         // 1. DB에서 signupVerifyToken으로 회원가입 처리 중인 유저가 있는지 조회하고 없다면 에러 처리
         // 2. 바로 로그인 상태가 되도록 JWT 발급
+        const user = await this.userRepository.findOneBy({
+            signupVerifyToekn: signupVerifyToken
+        });
 
-        throw new Error('Method not implemented');
-    }
+        if(!user){
+            throw new NotFoundException('유저가 존재하지 않습니다.');
+        }
 
-    async login(email: string, password: string){
-        // TODO
-        // 1. email, passwd를 가진 유저가 존재하는지 DB에서 확인 없다면 에러 처리
-        // 2. JWT 발급
-
-        throw new Error('Method not implemented');
+        return this.authService.login({
+            id: user.id,
+            name: user.name,
+            email: user.email
+        })
     }
 
     async getUserInfo(userId: string): Promise<UserInfo>{
         // TODO
         // 1. userID를 가진 유저가 존재하는지 DB에서 확인 없다면 에러
         // 2. 조회된 데이터를 UserInfo 타입으로 응답
+        const user = await this.userRepository.findOneBy({
+            id: userId
+        });
 
-        throw new Error('Method not implemented GET USER');
+        if(!user){
+            throw new NotFoundException('유저가 존재하지 않습니다.');
+        }
+
+        return {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+        };
     }
 }
