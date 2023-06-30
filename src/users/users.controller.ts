@@ -1,4 +1,4 @@
-import { Body, Controller, DefaultValuePipe, Get, Header, Headers, HttpStatus, Param, ParseIntPipe, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, DefaultValuePipe, Get, Header, Headers, HttpStatus, Param, ParseIntPipe, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { VerifyEmailDto } from './dto/verify-email.dto';
 import { UserLogininDto } from './dto/user-login.dto';
@@ -6,12 +6,18 @@ import { UserInfo } from './UserInfo';
 import { UsersService } from './users.service';
 import { AuthService } from 'src/auth/auth.service';
 import { AuthGuard } from 'src/guard/auth.guard';
+import { User } from './decorator/user.logined';
+
+interface User{
+    userId: string,
+    email: string,
+}
 
 @Controller('users')
 export class UsersController {
     constructor(
         private usersService: UsersService,
-        private authService: AuthService
+        private authService: AuthService,
     ) { }
 
     @Post()
@@ -39,6 +45,12 @@ export class UsersController {
         const { email, password } = dto;
 
         return this.usersService.login(email, password);
+    }
+
+    @UseGuards(AuthGuard)
+    @Get('/hello')
+    getHello(@User() user: User){
+        console.log(user);
     }
 
     /**

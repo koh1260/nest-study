@@ -4,6 +4,11 @@ import { UserLogininDto } from './dto/user-login.dto';
 import { UserInfo } from './UserInfo';
 import { UsersService } from './users.service';
 import { AuthService } from 'src/auth/auth.service';
+import { User } from './decorator/user.logined';
+interface User {
+    userId: string;
+    email: string;
+}
 export declare class UsersController {
     private usersService;
     private authService;
@@ -12,5 +17,7 @@ export declare class UsersController {
     findAll(): Promise<() => Promise<UserInfo[]>>;
     verifyEmail(dto: VerifyEmailDto): Promise<string>;
     login(dto: UserLogininDto): Promise<string>;
+    getHello(user: User): void;
     getUserInfo(headers: any, userId: string): Promise<UserInfo>;
 }
+export {};
