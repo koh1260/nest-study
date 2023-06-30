@@ -1,4 +1,4 @@
-import { Head, Header, Headers, Injectable, InternalServerErrorException, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
+import { Head, Header, Headers, Injectable, InternalServerErrorException, Logger, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import { UserInfo } from './UserInfo';
 import { EmailService } from 'src/email/email.service';
 import * as uuid from 'uuid';
@@ -11,12 +11,20 @@ import { AuthService } from 'src/auth/auth.service';
 
 @Injectable()
 export class UsersService {
+    private readonly logger = new Logger(UsersService.name);
+
     constructor(
         private authService: AuthService,
         private emailService: EmailService,
         @InjectRepository(UserEntity) private userRepository: Repository<UserEntity>,
         private dataSource: DataSource,
     ){}
+
+    getHello(): string{
+        this.logger.debug('level: debug');
+
+        return 'Hello World';
+    }
 
     /**
      * QueryRunner Transaciton
@@ -89,7 +97,7 @@ export class UsersService {
 
         const signupVerifyToken = uuid.v1();
 
-        await this.saveUserUsingTransaction(name, email, password, signupVerifyToken);
+        await this.saveUser(name, email, password, signupVerifyToken);
         await this.sendMemberJoinEmail(email, signupVerifyToken);
     }
 
@@ -98,7 +106,6 @@ export class UsersService {
         const user = await this.userRepository.findOne({
             where: {email: email}
         });
-        console.log(user);
 
         return user !== null;
     }

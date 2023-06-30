@@ -8,7 +8,9 @@ export declare class UsersService {
     private emailService;
     private userRepository;
     private dataSource;
+    private readonly logger;
     constructor(authService: AuthService, emailService: EmailService, userRepository: Repository<UserEntity>, dataSource: DataSource);
+    getHello(): string;
     private saveUserUsingTransaction;
     findAll(): Promise<UserInfo[]>;
     login(email: string, password: string): Promise<string>;

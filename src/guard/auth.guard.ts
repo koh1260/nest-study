@@ -24,7 +24,7 @@ export class AuthGuard implements CanActivate{
         const {userId, email} = this.authService.verify(jwtString);
 
         /**
-         * 인가 시 header의 authorization에 있는 토근의 정보를 읽어 로그인한 회원 정보를 request 객체에 담아 사용할 수 있음
+         * 인가 시 header의 authorization에 있는 토근의 정보를 읽어 로그인한 회원 정보를 request 객체에 담아 사용할 수 있음.
          */
         request.user = {
             userId: userId,

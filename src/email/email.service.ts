@@ -31,7 +31,6 @@ export class EmailService {
         const baseUrl = 'http://localhost:3000';
 
         const url = `${baseUrl}/users/email-verify?signupVerifyToken=${signupVerifyToken}`;
-        console.log('emainService: ' + emailAddress);
         const mailOptions: EmailOptions = {
             to: emailAddress,
             subject: '가입 인증 메일',
