@@ -12,6 +12,12 @@ import {
   WinstonModule,
   utilities as nestWinstonModuleUtilities,
 } from 'nest-winston';
+import { HttpExceptionFilter } from './exception/http-exception.filter';
+
+const httpExceptionFilter = {
+  provide: 'APP_FILTER',
+  useValue: HttpExceptionFilter,
+}
 
 @Module({
   imports: [
@@ -46,6 +52,9 @@ import {
     })
   ],
   controllers: [],
-  providers: [AuthService],
+  providers: [
+    AuthService, 
+    httpExceptionFilter
+  ],
 })
 export class AppModule {}

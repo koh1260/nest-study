@@ -15,11 +15,11 @@ export declare class UsersController {
     private authService;
     private readonly logger;
     constructor(usersService: UsersService, authService: AuthService, logger: WinstonLogger);
+    printWinston(dto: unknown): void;
     createUser(dto: CreateUserDto): Promise<void>;
     findAll(): Promise<() => Promise<UserInfo[]>>;
     verifyEmail(dto: VerifyEmailDto): Promise<string>;
     login(dto: UserLogininDto): Promise<string>;
-    printWinston(dto: any): void;
     getHello(user: User): void;
     getUserInfo(headers: any, userId: string): Promise<UserInfo>;
 }

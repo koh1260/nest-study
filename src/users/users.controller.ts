@@ -1,4 +1,4 @@
-import { Body, Controller, DefaultValuePipe, Get, Header, Headers, HttpStatus, Inject, Param, ParseIntPipe, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, DefaultValuePipe, Get, Header, Headers, HttpStatus, Inject, Param, ParseIntPipe, Post, Query, Req, UseFilters, UseGuards } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { VerifyEmailDto } from './dto/verify-email.dto';
 import { UserLogininDto } from './dto/user-login.dto';
@@ -8,6 +8,7 @@ import { AuthService } from 'src/auth/auth.service';
 import { AuthGuard } from 'src/guard/auth.guard';
 import { User } from './decorator/user.logined';
 import { WINSTON_MODULE_NEST_PROVIDER, WinstonLogger } from 'nest-winston';
+import { HttpExceptionFilter } from 'src/exception/http-exception.filter';
 
 interface User{
     userId: string,
@@ -15,6 +16,7 @@ interface User{
 }
 
 @Controller('users')
+@UseFilters(HttpExceptionFilter)
 export class UsersController {
     constructor(
         private usersService: UsersService,
@@ -22,10 +24,15 @@ export class UsersController {
         @Inject(WINSTON_MODULE_NEST_PROVIDER) private readonly logger: WinstonLogger,
     ) { }
 
+    // Winston
+    printWinston(dto: unknown){
+        this.logger.getWinstonLogger().silly('silly', dto);
+    }
+
     @Post()
     async createUser(@Body() dto: CreateUserDto): Promise<void> {
         const { name, email, password } = dto;
-        
+
         await this.usersService.createUser(name, email, password);
     }
 
@@ -48,10 +55,6 @@ export class UsersController {
         this.printWinston(dto);
 
         return this.usersService.login(email, password);
-    }
-
-    printWinston(dto){
-        this.logger.getWinstonLogger().silly('silly', dto);
     }
 
     @UseGuards(AuthGuard)
